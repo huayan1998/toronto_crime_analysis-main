@@ -21,7 +21,7 @@ data$AGE_COHORT <- as.factor(data$AGE_COHORT)
 
 #### Visualizations with ggplot2 ####
 # Visualization 1: a line chart of crime categories by year (2019 - 2023) 
-# Aggregate data by CATEGORY and REPORT_YEAR
+# Aggregate data by year and category
 category_vs_year <- data %>%
   group_by(REPORT_YEAR, CATEGORY) %>%
   summarize(Total_Count = sum(COUNT_))
@@ -35,7 +35,7 @@ vis1 <- ggplot(category_vs_year, aes(x=REPORT_YEAR, y=Total_Count, color=CATEGOR
 vis1
 
 # Visualization 2: a bar chart of crime distribution by sex
-# Aggregate data by SEX and CATEGORY
+# Aggregate data by sex and category
 crime_by_sex <- data %>%
   group_by(SEX, CATEGORY) %>%
   summarize(Total_Count = sum(COUNT_))
@@ -50,7 +50,6 @@ vis2 <- ggplot(crime_by_sex, aes(x = SEX, y = Total_Count, fill = CATEGORY)) +
 vis2
 
 # Visualization 3: side-by-side boxplot for crimes by age cohort
-# Create boxplot to show the distribution of crime count by age cohort and category
 vis3 <- ggplot(data, aes(x = AGE_COHORT, y = COUNT_, fill = CATEGORY)) +
   geom_boxplot() +
   labs(title = "Crime Count Distribution by Age Cohort",
@@ -59,3 +58,31 @@ vis3 <- ggplot(data, aes(x = AGE_COHORT, y = COUNT_, fill = CATEGORY)) +
 vis3
 
 #### Table creations with knitr ####
+# Table 1: proportion of crimes by category, year, and sex
+crime_proportion_sex_year <- data %>%
+  group_by(REPORT_YEAR, SEX) %>%
+  summarize(Total_Count = sum(COUNT_)) %>%
+  group_by(REPORT_YEAR) %>%
+  mutate(Proportion = round(Total_Count / sum(Total_Count), 3))
+kable(crime_proportion_sex_year, caption = "Proportion of Crimes by Category, Year, and Sex")
+
+
+# Table 2: the top 5 most common subtypes of crimes for each year
+top_subtypes_by_year <- data %>%
+  group_by(SUBTYPE, REPORT_YEAR) %>%
+  summarize(Total_Count = sum(COUNT_)) %>%
+  arrange(desc(Total_Count)) %>%
+  group_by(REPORT_YEAR) %>%
+  top_n(5, Total_Count)
+
+# Reshape the data to have a column for each year
+top_subtypes_wide <- top_subtypes_by_year %>%
+  pivot_wider(names_from = REPORT_YEAR, values_from = Total_Count, values_fill = 0) %>%
+  select(SUBTYPE, `2019`, `2020`, `2021`, `2022`, `2023`)
+
+# Add a row for total and concatenate
+total_row <- top_subtypes_wide %>%
+  summarize(across(`2019`:`2023`, sum)) %>%
+  mutate(SUBTYPE = "Total")
+top_subtypes_with_total <- bind_rows(top_subtypes_wide, total_row)
+kable(top_subtypes_with_total, caption = "Top 5 Most Common Crime Subtypes by Year")
