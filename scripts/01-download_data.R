@@ -1,26 +1,16 @@
-#### Preamble ####
-# Purpose: Downloads and saves the data from [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
-# License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
-
-
-#### Workspace setup ####
 library(opendatatoronto)
-library(tidyverse)
-# [...UPDATE THIS...]
+library(dplyr)
 
-#### Download data ####
-# [...ADD CODE HERE TO DOWNLOAD...]
+# get package and resources for the dataset 
+packages <- show_package("police-annual-statistical-report-victims-of-crime")
+resources <- list_package_resources("police-annual-statistical-report-victims-of-crime")
 
+# filter for only CSV datastore
+datastore_resources <- filter(resources, tolower(format) %in% c('csv'))
 
+# load the datastore
+data <- filter(datastore_resources, row_number()==1) %>% get_resource()
 
-#### Save data ####
-# [...UPDATE THIS...]
-# change the_raw_data to whatever name you assigned when you downloaded it.
-write_csv(the_raw_data, "inputs/data/raw_data.csv") 
-
-         
+# set saving file path and write to it
+file_path <- "data/raw_data/toronto_crime_victims_raw.csv"
+write.csv(data, file_path, row.names = FALSE)
