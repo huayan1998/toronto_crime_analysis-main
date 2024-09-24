@@ -1,5 +1,5 @@
 ---
-title: "Is Our Community Getting Safer in Recent Years: A Data-Driven Study of Local Crime Incidents in Toronto"
+title: "Is Our Community Getting Safer in Recent Years: A Data-Driven Study of Crime Victims in Toronto"
 thanks: "Code and data are available at: https://github.com/huayan1998/toronto_crime_analysis-main"
 format: pdf
 author: Huayan Yu
@@ -74,7 +74,7 @@ kable(summary_df, row.names = FALSE)
 
 Table 1 above gives an overview of the distribution of key variables, showing that all crimes recorded in the dataset fall under the "Crimes Against the Person" categories. "Assault" is the most common subtype (617), with a fairly even gender distribution (518 females, 570 males). Age cohorts show a diverse range, with "Unknown" being frequent, and many victims in the 25 to 34 age range (165).
 
-The dataset has no missing values in each of its column,and we will not be analyzing the column `ASSAULT_SUBTYPE` because limited information is found in the Open Data Toronto data description page. [1] Hence no further data cleaning is needed other than removing the `ASSAULT_SUBTYPE` column. This comprehensive dataset facilitates focused analysis on victim profiles and crime trends, making it valuable for understanding community safety. 
+The dataset has no missing values in each of its column, and we will not be analyzing the column `ASSAULT_SUBTYPE` because limited information is found in the Open Data Toronto data description page. [1] Hence no further data cleaning is needed other than removing the `ASSAULT_SUBTYPE` column. This comprehensive dataset facilitates focused analysis on victim profiles and crime trends, making it valuable for understanding community safety. 
 
 # Results {#sec-results}
 
@@ -183,6 +183,20 @@ vis3 <- ggplot(data %>% filter(REPORT_YEAR >= 2020),
   facet_grid(~ REPORT_YEAR)
 vis3
 ```
+
+# Discussion
+
+## Conclusion
+
+In this study, we start from introducing the open-source dataset that describes crime victims in Toronto in the last ten years, and then proceed with figure and table visualizations to address the research question of whether our community is getting safer in recent years. From our analysis in @sec-results, we discover that assault cases represent the largest proportion of crimes, showing consistent growth over the years. The gender distribution of victims remains balanced, with no significant differences between male and female victimization rates. 
+
+However, crime rates across all subtypes began to rise again after 2020 as seen by the increasing numbers of victims across all subtypes, age groups, and genders. The number of youth and child victims also demonstrate upward trends in the new decade. Even though recent improvements in data collection methods show positive progress in identifying victims more accurately, public safety is still facing an increasing number of challenges. Based on the data-driven results, we are centainly not confident enough to claim significant progress for the public safety in the Toronto communities.
+
+## Limitations and Next Steps
+
+There are still a few limitations that should be acknowledged in this study. The dataset offers a broad overview without including more specific details on the impacts or contexts of individual crimes, limiting our ability to analyze causes and consequences of crime activities in greater depth. Additionally, the analysis was based on visualization without incorporating advanced statistical models, such as regression analysis or time series forecasting, to better quantify trends or correlations. For instance, cross-factor interactions—like how age and sex may jointly affect crime victimization—remain unexplored. 
+
+Future work could address these gaps by obtaining more detailed data on crime contexts, such as socio-economic background or psychological impact assessments, and incorporating insights from professionals in relevant public sectors and social services to provide practical and grounded interpretations. Deploying advanced statistical techniques, such as regression analysis, could further enhance understanding by quantifying correlations and interactions between different factors. This would allow for a deeper and more nuanced exploration of crime trends and help guide policy interventions more effectively.
 
 \newpage
 
