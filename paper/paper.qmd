@@ -35,11 +35,11 @@ In the body of this paper, we will first discuss the data source and our computa
 
 ## Data Source and Computational Environment
 
-The dataset used in this study, "Police Annual Statistical Report: Victims of Crime," is provided by the City of Toronto through its open data initiative. [1] It reflects crime incident reports, focusing on the experiences of victims from 2019 to 2023. The data is publicly accessible, ensuring transparency in city governance and fostering community engagement in crime monitoring. Ethically, the data adheres to the Open Government License, which mandates privacy protections for individuals involved, promoting responsible use in academic and policy analysis. [2] Statistically, the dataset offers insights into crime trends, aiding in evidence-based policymaking. The dataset also provides rich context for statisticians to extract useful insights by analyzing victim components and trends over time.
+The dataset used in this study, "Police Annual Statistical Report: Victims of Crime," is provided by the City of Toronto through its open data initiative. [@citeTorontoCrimeData] It reflects crime incident reports, focusing on the experiences of victims from 2019 to 2023. The data is publicly accessible, ensuring transparency in city governance and fostering community engagement in crime monitoring. Ethically, the data adheres to the Open Government License, which mandates privacy protections for individuals involved, promoting responsible use in academic and policy analysis. [@citeOntarioOpenGovLicense] Statistically, the dataset offers insights into crime trends, aiding in evidence-based policymaking. The dataset also provides rich context for statisticians to extract useful insights by analyzing victim components and trends over time.
 
-All data analysis and visualization in this paper were performed using the R programming language (R Core Team 2023) along with the following packages: `tidyverse` (Wickham et al. 2019) which includes the `dplyr` component (Hadley Wickham 2023) for data frame manipulation and `ggplot2` (Wickham 2016) for visualizations, as well as `knitr` (Xie 2023) for table formatting.
+All data analysis and visualization in this paper were performed using the R programming language [@citeR] along with the following packages: `tidyverse` [@citetidyverse] which includes the `dplyr` component [@citedplyr] for data frame manipulation and `ggplot2` [@citeggplot2] for visualizations, as well as `knitr` [@citeknitr] for table formatting.
 
-## Data Description
+## Data Measurement and Description
 
 The dataset consists of 1244 records from 2014 to 2023, with each column representing critical information as follows:
 
@@ -51,7 +51,7 @@ The dataset consists of 1244 records from 2014 to 2023, with each column represe
 - `AGE_COHORT`: Specific age groupings (e.g., 25 to 34) for more detailed demographic analysis.
 - `COUNT_`: The number of occurrences for each record.
 
-In similar studies, other datasets like overall crime reports which usually focus more on offenders could have been used. However, these datasets were not appropriate for our study because this dataset uniquely focuses on victims, providing insights specific to victim demographics and experiences that are important for understanding crime impacts within Toronto local communities. 
+Each entry in the dataset represents a summary of crime victims by various demographic and crime categories as reported by the Toronto police department. The data originates from actual incidents and victim reports, which are then translated into structured records that quantify crime events over time. In similar studies, other datasets like overall crime reports which usually focus more on offenders could have been used. However, these datasets were not appropriate for our study because this dataset uniquely focuses on victims, providing insights specific to victim demographics and experiences that are important for understanding crime impacts within Toronto local communities. 
 
 ```{r}
 #| echo: false
@@ -76,9 +76,7 @@ summary_df[is.na(summary_df)] <- ""
 kable(summary_df, row.names = FALSE)
 ```
 
-Table 1 above gives an overview of the distribution of key variables, showing that all crimes recorded in the dataset fall under the "Crimes Against the Person" categories. "Assault" is the most common subtype (617), with a fairly even gender distribution (518 females, 570 males). Age cohorts show a diverse range, with "Unknown" being frequent, and many victims in the 25 to 34 age range (165).
-
-The dataset has no missing values in any of its columns, and we will not be analyzing the column `ASSAULT_SUBTYPE` because limited information is found in the Open Data Toronto data description page. [1] Therefore, no further data cleaning is needed other than removing the `ASSAULT_SUBTYPE` column. This comprehensive dataset facilitates focused analysis on victim profiles and crime trends, making it valuable for understanding community safety. 
+Table 1 above gives an overview of the distribution of key variables, showing that all crimes recorded in the dataset fall under the "Crimes Against the Person" categories. "Assault" is the most common subtype (617), with a fairly even gender distribution (518 females, 570 males). Age cohorts show a diverse range, with "Unknown" being frequent, and many victims in the 25 to 34 age range (165). This dataset can now facilitate focused analysis on victim profiles and crime trends, making it valuable for understanding community safety. 
 
 # Results {#sec-results}
 
@@ -225,12 +223,12 @@ Future work could address these gaps by obtaining more detailed data on crime co
 
 \newpage
 
-# References
+# Appendix
 
-[1]. About Police Annual Statistical Report - Victims of Crimes (https://open.toronto.ca/dataset/police-annual-statistical-report-victims-of-crime/)
-[2]. Open Government Licence – Ontario (https://www.ontario.ca/page/open-government-licence-ontario)
-[3]. R
-[4]. tidyverse
-[5]. dplyr
-[6]. ggplot2
-[7]. knitr
+## Data Cleaning
+
+The dataset has no missing values in any of its columns, and we will not be analyzing the column `ASSAULT_SUBTYPE` because limited information is found in the Open Data Toronto data description page. [@citeTorontoCrimeData] Therefore, no further data cleaning is needed other than removing the `ASSAULT_SUBTYPE` column.
+
+\newpage
+
+# References
