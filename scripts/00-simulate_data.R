@@ -24,15 +24,15 @@ AGE_COHORT <- sample(c("15 to 24", "25 to 34", "35 to 44", "45 to 54", "55 to 64
 # Assign weights for different factors affecting COUNT_
 category_weights <- c("Crimes Against the Person" = 1.5,
                       "Crimes Against Property" = 1.2, 
-                      "Other Crimes" = 1.0)
+                      "Other Crimes" = 0.9)
 sex_weights <- c("M" = 1.3, "F" = 1.2, "U" = 1.0)
-age_cohort_weights <- c("15 to 24" = 1.0, "25 to 34" = 1.2, "35 to 44" = 1.3, 
-                        "45 to 54" = 1.4, "55 to 64" = 1.3, "65+" = 1.1)
-subtype_weights <- c("Assault" = 1.5, "Theft" = 1.2, "Robbery" = 1.4, "Fraud" = 1.1, "Other" = 1.0)
-year_weights <- c("2019" = 1.4, "2020" = 1.3, "2021" = 1.2, "2022" = 1.1, "2023" = 1.0)
+age_cohort_weights <- c("15 to 24" = 1.0, "25 to 34" = 1.2, "35 to 44" = 1.6, 
+                        "45 to 54" = 1.5, "55 to 64" = 1.1, "65+" = 0.8)
+subtype_weights <- c("Assault" = 1.5, "Theft" = 1.2, "Robbery" = 1.4, "Fraud" = 1.1, "Other" = 0.7)
+year_weights <- c("2019" = 1.3, "2020" = 1.2, "2021" = 1.1, "2022" = 1.15, "2023" = 1.25) # U-curve for crimes
 
 # Simulate the COUNT variable using a weights and introduce some random normal noises
-base_count <- 10 * category_weights[CATEGORY] * sex_weights[SEX] * 
+base_count <- 20 * category_weights[CATEGORY] * sex_weights[SEX] * 
   age_cohort_weights[AGE_COHORT] * subtype_weights[SUBTYPE] * 
   year_weights[as.character(REPORT_YEAR)]
 COUNT_ <- round(base_count + rnorm(1000, mean = 0, sd = 20))
