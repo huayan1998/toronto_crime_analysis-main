@@ -18,12 +18,7 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-Aspects of the code were written with the help of the auto-complete tool, Codriver. The abstract and introduction were written with the help of ChatHorse and the entire chat history is available in inputs/llms/usage.txt.
+The LLM ChatGPT-4 is used as an aid for the write-up for this paper solely on the below aspects:
 
-## Some checks
-
-- [ ] Change the rproj file name so that it's not starter_folder.Rproj
-- [ ] Change the README title so that it's not Starter folder
-- [ ] Remove files that you're not using
-- [ ] Update comments in R scripts
-- [ ] Remove this checklist
+- Debugging and usage guidance with Quarto-related syntax and annotations.
+- Text proofreading for grammar and spelling mistakes.
