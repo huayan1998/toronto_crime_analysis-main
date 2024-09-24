@@ -1,3 +1,12 @@
+#### Preamble ####
+# Purpose: Simulate the data for analysis that adheres to the format of the Open Data Toronto victims of crimes data set
+# Author: Huayan Yu
+# Date: 24 September 2024
+# Contact: huayan.yu@mail.utoronto.ca
+# License: MIT
+# Pre-requisites: Libraries `tidyverse` installed
+
+#### Workspace setup ####
 library(tidyverse)
 
 # Set seed for reproducibility

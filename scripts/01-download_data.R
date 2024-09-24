@@ -1,5 +1,14 @@
+#### Preamble ####
+# Purpose: Download the source raw data from the open-source Open Data Toronto website
+# Author: Huayan Yu
+# Date: 24 September 2024
+# Contact: huayan.yu@mail.utoronto.ca
+# License: MIT
+# Pre-requisites: Libraries `tidyverse` and `opendatatoronto` installed
+
+#### Workspace setup ####
 library(opendatatoronto)
-library(dplyr)
+library(tidyverse)
 
 # get package and resources for the dataset 
 packages <- show_package("police-annual-statistical-report-victims-of-crime")
