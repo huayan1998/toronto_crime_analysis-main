@@ -37,8 +37,8 @@ vis1 <- ggplot(category_vs_year, aes(x=REPORT_YEAR, y=Total_Count, color=SUBTYPE
   theme_minimal()
 vis1
 
-# Visualization 2: a bar chart of assault victim distribution by sex
-# Aggregate data by sex and filtered on assault subtype
+# Visualization 2: a bar chart of assault victim distribution by sex and age group
+# Aggregate data by sex and age group and filtered on assault subtype
 assault_victim_by_sex_age <- data %>%
   filter(SUBTYPE == "Assault") %>%
   group_by(SEX, AGE_GROUP) %>%
@@ -88,3 +88,16 @@ colnames(proportion_sex_year) <- c("Year", "Sex", "Total", "Proportion",
                                    "Pct Change Total")
 proportion_sex_year[is.na(proportion_sex_year)] = 0
 kable(proportion_sex_year, row.names=FALSE)
+
+# Table 3: percentage change for the three age groups from 2020 to 2023.
+
+victim_change <- data %>%
+  filter(REPORT_YEAR %in% c(2020, 2023)) %>%
+  group_by(REPORT_YEAR, AGE_GROUP) %>%
+  summarize(Total_Victims = sum(COUNT_)) %>%
+  spread(REPORT_YEAR, Total_Victims) %>%
+  mutate(Pct_Change = round(((`2023` - `2020`) / `2020`) * 100, 2)) %>%
+  select(AGE_GROUP, `2020`, `2023`, Pct_Change)
+victim_change <- victim_change[c(1, 2, 4),] # remove the unknown category
+colnames(victim_change) <- c("Age Group", "2020", "2023", "Percentage Change")
+kable(victim_change, row.names=FALSE)

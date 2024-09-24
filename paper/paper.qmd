@@ -6,7 +6,7 @@ author: Huayan Yu
 date: September 24, 2024
 editor: visual
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "In this paper, we analyzed crime victim data from Toronto between 2014 and 2023, focusing on various crime subtypes, demographics, and trends. Using visualizations, we examined changes in crime patterns to identify any shifts in public safety conditions. Our findings show a recurring rise in assault cases after 2020 along with a concerning increase in youth and child victims. This study highlights the ongoing challenges in community safety and outlines the need for targeted interventions and policies to address the recent rise in crime."
 number-sections: true
 bibliography: references.bib
 ---
@@ -23,9 +23,13 @@ library(knitr)
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
+Crime and public safety are always important concerns for urban areas, with significant social and economic consequences for local communities. In recent years, technology advancements have enabled researchers to leverage data-driven approaches to better understand and respond to crime patterns. Toronto, as one of Canada's largest and most diverse cities, faces unique challenges in ensuring the safety of its residents. As such, open-source crime data made available by the City of Toronto provides a valuable resource for analyzing crime trends, but certainly more work is needed to translate these patterns into actionable insights for policy and community engagement.
 
-In the body of this paper, we will first discuss the data source and our computational environment, along with some basic facts and significances about the data set in @sec-data. We then aim to uncover the dynamics and insights from the data through diagram and table visualizations in @sec-results to address our primary research question for the trend of public safety in recent years in the City of Toronto.
+This paper focuses on analyzing crime victim data from Toronto between 2014 and 2023. Specifically, we seek to address the research question: Is the community getting safer in recent years? While numerous studies have explored crime trends, most focus on individual crime types or localized areas. This paper takes a different approach by analyzing various crime subtypes over time, paying particular attention to demographic variables such as sex and age. By visualizing these patterns, we aim to answer the research question quantitatively by identifying potential areas where targeted interventions may be needed.
+
+Our findings show that while most crime types, such as assault, have exhibited a consistent decresing trend in the last decade, they all seem to regain the upward trends in or after 2020, posting new threats and challenges to public safety where youth and child victimization trends are of particular concern. These findings contribute to ongoing public safety discussions in Toronto, emphasizing the need for targeted crime prevention strategies and improved public policy.
+
+In the body of this paper, we will first discuss the data source and our computational environment, along with some basic facts and significances about the data in @sec-data. We then present the analysis results,  focusing on crime subtype trends, gender distribution, and the impact of recent social challenges in @sec-results to address our primary research question for the trend of public safety in recent years in the City of Toronto. Finally in @sec-discuss, we conclude the paper with a summary of key findings and their implications for public safety in Toronto and discuss existing limitations and future directions.
 
 # Data {#sec-data}
 
@@ -184,13 +188,34 @@ vis3 <- ggplot(data %>% filter(REPORT_YEAR >= 2020),
 vis3
 ```
 
-# Discussion
+In Table 3 below, we can more directly observe the significance increase in the number of crime victims across all three age groups. Adult victim counts rise by 19.49%, showing a steady increase. However, the most substantial changes are observed among the youth and child victim groups, with a 75.05% rise in youth victims and a 30.72% increase in child victims. These findings suggest a worrying trend, particularly for younger populations, which might reflect heightened risks for these groups.
+
+```{r}
+#| label: table-three
+#| tbl-cap: Percentage Changes of Crime Victims over Age Groups
+#| echo: false
+#| message: false
+#| warning: false
+
+victim_change <- data %>%
+  filter(REPORT_YEAR %in% c(2020, 2023)) %>%
+  group_by(REPORT_YEAR, AGE_GROUP) %>%
+  summarize(Total_Victims = sum(COUNT_)) %>%
+  spread(REPORT_YEAR, Total_Victims) %>%
+  mutate(Pct_Change = round(((`2023` - `2020`) / `2020`) * 100, 2)) %>%
+  select(AGE_GROUP, `2020`, `2023`, Pct_Change)
+victim_change <- victim_change[c(1, 2, 4),] # remove the unknown category
+colnames(victim_change) <- c("Age Group", "2020", "2023", "Percentage Change")
+kable(victim_change, row.names=FALSE)
+```
+
+# Discussion {#sec-discuss}
 
 ## Conclusion
 
 In this study, we start from introducing the open-source dataset that describes crime victims in Toronto in the last ten years, and then proceed with figure and table visualizations to address the research question of whether our community is getting safer in recent years. From our analysis in @sec-results, we discover that assault cases represent the largest proportion of crimes, showing consistent growth over the years. The gender distribution of victims remains balanced, with no significant differences between male and female victimization rates. 
 
-However, crime rates across all subtypes began to rise again after 2020 as seen by the increasing numbers of victims across all subtypes, age groups, and genders. The number of youth and child victims also demonstrate upward trends in the new decade. Even though recent improvements in data collection methods show positive progress in identifying victims more accurately, public safety is still facing an increasing number of challenges. Based on the data-driven results, we are centainly not confident enough to claim significant progress for the public safety in the Toronto communities.
+However, crime rates across all subtypes began to rise again after 2020 as seen by the increasing numbers of victims across all subtypes, age groups, and genders. The number of youth and child victims also demonstrate upward trends in the new decade with about $75\%$ increase in the number of youth victims which raises particular concerns. Even though recent improvements in data collection methods show positive progress in identifying victims more accurately, public safety is still facing an increasing number of challenges. Based on the data-driven results, we are centainly not confident enough to claim significant progress for the public safety in the Toronto communities.
 
 ## Limitations and Next Steps
 
