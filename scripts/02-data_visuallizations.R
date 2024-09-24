@@ -18,6 +18,7 @@ data <- read.csv("data/raw_data/toronto_crime_victims_raw.csv")
 data$CATEGORY <- as.factor(data$CATEGORY)
 data$SEX <- as.factor(data$SEX)
 data$AGE_COHORT <- as.factor(data$AGE_COHORT)
+data$AGE_GROUP <- as.factor(data$AGE_GROUP)
 data$SUBTYPE <- as.factor(data$SUBTYPE)
 data$ASSAULT_SUBTYPE <- as.factor(data$ASSAULT_SUBTYPE)
 
