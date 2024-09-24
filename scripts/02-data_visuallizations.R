@@ -7,8 +7,7 @@
 # Pre-requisites: Libraries `tidyverse` and `knitr` installed
 
 #### Workspace setup ####
-library(ggplot2)
-library(dplyr)
+library(tidyverse)
 library(knitr)
 
 # Load the data
@@ -54,8 +53,8 @@ vis2 <- ggplot(assault_victim_by_sex_age, aes(x = SEX, y = Total_Count, fill = A
   theme_minimal()
 vis2
 
-# Visualization 3: side-by-side boxplot for victims by age groups over year (last 5 years)
-vis3 <- ggplot(data %>% filter(REPORT_YEAR >= 2019), 
+# Visualization 3: side-by-side boxplot for victims by age groups over year (last 4 years)
+vis3 <- ggplot(data %>% filter(REPORT_YEAR >= 2020), 
                aes(x = AGE_GROUP, y = COUNT_, color = AGE_GROUP)) +
   geom_boxplot() +
   labs(title = "Victim Count Distribution by Age Cohort", 
@@ -67,39 +66,25 @@ vis3
 
 
 #### Table creations with knitr ####
-# Table 0: data summarization table
+# Table 1: data summarization table
 # Replace NA values with empty strings for the selected columns
 summary_data <- summary(data[,c(3, 4, 6, 8)])
 summary_df <- as.data.frame.matrix(summary_data)
 summary_df[is.na(summary_df)] <- ""
 kable(summary_df, caption = "Number of Records in Each Categorical Variable", row.names = FALSE)
 
-# Table 1: proportion of victims by category, year, and sex
+# Table 2: proportion and its growth of victims by year and sex (last 4 years)
 proportion_sex_year <- data %>%
-  filter(REPORT_YEAR >= 2019) %>%
+  filter(REPORT_YEAR >= 2020) %>%
   group_by(REPORT_YEAR, SEX) %>%
   summarize(Total_Count = sum(COUNT_)) %>%
   group_by(REPORT_YEAR) %>%
-  mutate(Proportion = round(Total_Count / sum(Total_Count), 3))
-kable(proportion_sex_year, caption = "Proportion of Victims by Category, Year, and Sex")
+  mutate(Proportion = round(Total_Count / sum(Total_Count), 3)) %>%
+  arrange(SEX) %>%
+  group_by(SEX) %>%
+  mutate(Percentage_Change_Total = round((Total_Count - lag(Total_Count)) / lag(Total_Count) * 100, 2))
 
-
-# Table 2: the top 5 most common subtypes of victims for each year
-top_subtypes_by_year <- data %>%
-  group_by(SUBTYPE, REPORT_YEAR) %>%
-  summarize(Total_Count = sum(COUNT_)) %>%
-  arrange(desc(Total_Count)) %>%
-  group_by(REPORT_YEAR) %>%
-  top_n(5, Total_Count)
-
-# Reshape the data to have a column for each year
-top_subtypes_wide <- top_subtypes_by_year %>%
-  pivot_wider(names_from = REPORT_YEAR, values_from = Total_Count, values_fill = 0) %>%
-  select(SUBTYPE, `2014`, `2015`, `2016`, `2017`, `2018`, `2019`, `2020`, `2021`, `2022`, `2023`)
-
-# Add a row for total and concatenate
-total_row <- top_subtypes_wide %>%
-  summarize(across(`2014`:`2023`, sum)) %>%
-  mutate(SUBTYPE = "Total")
-top_subtypes_with_total <- bind_rows(top_subtypes_wide, total_row)
-kable(top_subtypes_with_total, caption = "Top 5 Most Common Victim Subtypes by Year")
+colnames(proportion_sex_year) <- c("Year", "Sex", "Total", "Proportion",
+                                   "Pct Change Total")
+proportion_sex_year[is.na(proportion_sex_year)] = 0
+kable(proportion_sex_year, row.names=FALSE)

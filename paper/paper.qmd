@@ -11,9 +11,12 @@ number-sections: true
 bibliography: references.bib
 ---
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
 #| echo: false
+#| warning: false
+#| message: false
 
+library(bookdown)
 library(tidyverse)
 library(knitr)
 ```
@@ -22,13 +25,13 @@ library(knitr)
 
 You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
 
-The remainder of this paper is structured as follows. @sec-data....
+In the body of this paper, we will first discuss the data source and our computational environment, along with some basic facts and significances about the data set in @sec-data. We then aim to uncover the dynamics and insights from the data through diagram and table visualizations in @sec-results to address our primary research question for the trend of public safety in recent years in the City of Toronto.
 
 # Data {#sec-data}
 
 ## Data Source and Computational Environment
 
-The dataset used in this study, "Police Annual Statistical Report: Victims of Crime," is provided by the City of Toronto through its open data initiative. [1] It reflects crime incident reports, focusing on the experiences of victims from 2019 to 2023. The data is publicly accessible, ensuring transparency in city governance and fostering community engagement in crime monitoring. Ethically, the data adheres to the Open Government License, which mandates privacy protections for individuals involved, promoting responsible use in academic and policy analysis. [2] Statistically, the dataset offers insights into crime trends, aiding in evidence-based policymaking.
+The dataset used in this study, "Police Annual Statistical Report: Victims of Crime," is provided by the City of Toronto through its open data initiative. [1] It reflects crime incident reports, focusing on the experiences of victims from 2019 to 2023. The data is publicly accessible, ensuring transparency in city governance and fostering community engagement in crime monitoring. Ethically, the data adheres to the Open Government License, which mandates privacy protections for individuals involved, promoting responsible use in academic and policy analysis. [2] Statistically, the dataset offers insights into crime trends, aiding in evidence-based policymaking. The data set also provides rich context for statisticians to extract useful insights by analyzing victim components and trends over time.
 
 All data analysis and visualization in this paper were performed using the R programming language (R Core Team 2023) along with the following packages: `tidyverse` (Wickham et al. 2019) which includes the `dplyr` component (Hadley Wickham 2023) for data frame manipulation and `ggplot2` (Wickham 2016) for visualizations, as well as `knitr` (Xie 2023) for table formatting.
 
@@ -40,13 +43,16 @@ The dataset consists of 1244 records from 2014 to 2023, with each column represe
 - `CATEGORY`: The general classification of the crime, such as "Crimes Against the Person."
 - `SUBTYPE`: A more detailed breakdown of the crime, including types like "Assault" or "Robbery."
 - `SEX`: Gender of the victim, represented as Male (M), Female (F), or Unknown (U).
-- `AGE_GROUP`: The age range of the victim.
+- `AGE_GROUP`: The age range of the victim, including "Child", "Adult", "Youth", and "Unknown."
 - `AGE_COHORT`: Specific age groupings (e.g., 25 to 34) for more detailed demographic analysis.
 - `COUNT_`: The number of occurrences for each record.
 
 In similar studies, other datasets like overall crime reports which usually focus more on offenders could have been used. However, these datasets were not appropriate for our study because this dataset uniquely focuses on victims, providing insights specific to victim demographics and experiences that are important for understanding crime impacts within Toronto local communities. 
 
 ```{r}
+#| echo: false
+#| tbl-cap: Number of Records in Each Categorical Variable
+
 # Load the data
 data <- read.csv("../data/raw_data/toronto_crime_victims_raw.csv")
 
@@ -58,30 +64,125 @@ data$AGE_GROUP <- as.factor(data$AGE_GROUP)
 data$SUBTYPE <- as.factor(data$SUBTYPE)
 data$ASSAULT_SUBTYPE <- as.factor(data$ASSAULT_SUBTYPE)
 
-# Table 0: data summarization table
+# Table 1: data summarization table
 # Replace NA values with empty strings for the selected columns
 summary_data <- summary(data[,c(3, 4, 6, 8)])
 summary_df <- as.data.frame.matrix(summary_data)
 summary_df[is.na(summary_df)] <- ""
-kable(summary_df, caption = "Number of Records in Each Categorical Variable", row.names = FALSE)
+kable(summary_df, row.names = FALSE)
 ```
 
 Table 1 above gives an overview of the distribution of key variables, showing that all crimes recorded in the dataset fall under the "Crimes Against the Person" categories. "Assault" is the most common subtype (617), with a fairly even gender distribution (518 females, 570 males). Age cohorts show a diverse range, with "Unknown" being frequent, and many victims in the 25 to 34 age range (165).
 
 The dataset has no missing values in each of its column,and we will not be analyzing the column `ASSAULT_SUBTYPE` because limited information is found in the Open Data Toronto data description page. [1] Hence no further data cleaning is needed other than removing the `ASSAULT_SUBTYPE` column. This comprehensive dataset facilitates focused analysis on victim profiles and crime trends, making it valuable for understanding community safety. 
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+# Results {#sec-results}
+
+## Discovering the victim patterns for different crime subtypes {#sec-results-1}
+
+We first attempt to discover trends in crime over time across different subtypes and identify specific areas that might require targeted interventions. We first consider @fig-one below which focuses on analyzing on crime dynamics in Toronto from 2014 to 2023. Assault has a prominent increasing trend, starting around $15000$ victims in 2014 and rising to over $20000$ by 2023, indicating a substantial escalation in assaults over the past decade except the sudden drop in 2019. On the other hand, crimes categorized as "Other" display a gradual decline after a peak in 2015, stabilizing in recent years, but this subtype is also witnessing a reclimb starting from 2022. Robbery and sexual violations show generally more stable, moderate patterns with minor fluctuations.
+
+This figure reveals that while certain violent crimes, such as assault, have increased, others have remained relatively consistent, highlighting distinct trajectories in various crime types over time. However, all subtypes exhibit upward trends again in or after 2021, adding new uncertainties and concerns about public safety. Considering the fact that assault and sexual violation crimes are usually associated with more physical and psychological injuries, the local community urges some effective policy changes to control escalating crimes.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
+#| label: fig-one
+#| fig-cap: Yearly victim trends by subtype from 2014 to 2023
 #| echo: false
+#| message: false
+#| warning: false
 
+# Visualization 1: a line chart of victim subtypes by year (2014 - 2023) 
+# Aggregate data by year and subtypes
+category_vs_year <- data %>%
+  group_by(REPORT_YEAR, SUBTYPE) %>%
+  summarize(Total_Count = sum(COUNT_))
+
+# Create line plot
+vis1 <- ggplot(category_vs_year, aes(x=REPORT_YEAR, y=Total_Count, color=SUBTYPE)) +
+  geom_line(linewidth=1) +
+  labs(title="Victim Trends by Subtype Over the Years",
+       x="Year", y="Total Victims", color="Crime Subtype") +
+  theme_minimal()
+vis1
 ```
 
-Talk more about it.
+As we look closer into the largest crime subtype of assaults in @fig-two, we discover that majority of victims are adults, regardless of gender, with over $70000$ adult victims in both male and female categories. It is worth noting that the victims of unknown age group are at comparative figures as child and youth victims, also posting concerns for the data quality being recorded in the police system. Additionally, while youth and child victims appear to be fewer, they still require further attentions especially after we adjust for the population age distribution.
 
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
+```{r}
+#| label: fig-two
+#| fig-cap: Count of victims of assault crimes by sex and age groups
+#| echo: false
+#| message: false
+#| warning: false
+
+# Aggregate data by sex and filtered on assault subtype
+assault_victim_by_sex_age <- data %>%
+  filter(SUBTYPE == "Assault") %>%
+  group_by(SEX, AGE_GROUP) %>%
+  summarize(Total_Count = sum(COUNT_))
+
+# Create bar plot
+vis2 <- ggplot(assault_victim_by_sex_age, aes(x = SEX, y = Total_Count, fill = AGE_GROUP)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Assault Victim Distribution by Sex and Age Group",
+       x = "Sex", y = "Total Victims",
+       fill = "Age Group") +
+  theme_minimal()
+vis2
+```
+
+## Discovering the trends of changes in victim counts after 2020 {#sec-results-2}
+
+As we discovered in @sec-results-1, all crime subtypes seem to regain the growth trend starting in or after 2020. This demands a closer examination of the dynamics within the victim data. Table 2 below reveals that the gender distribution of crime victims has remained relatively balanced over the years. This stability in gender distribution suggests a consistent pattern in the way crimes affect male and female populations. More importantly, the two genders both demonstrate a strictly increasing trend in the total number of victims with a growth rate of over $10\%$ from 2021 to 2022. This observation could be evidence for the residual effects of the COVID-19 pandemic and the accompanying economic challenges. The pandemic's disruptions could have contributed to a rise in both opportunity-driven and stress-induced crimes, placing general public mental health condition at another challenge.
+
+In contrast, the unknown category sees a sharp decline, with the total victim count decreasing by 35.23% between 2022 and 2023, indicating improved data collection or identification efforts.
+
+```{r}
+#| label: table-two
+#| tbl-cap: Proportion and Growth of Victims by Year and Sex
+#| echo: false
+#| message: false
+#| warning: false
+
+proportion_sex_year <- data %>%
+  filter(REPORT_YEAR >= 2020) %>%
+  group_by(REPORT_YEAR, SEX) %>%
+  summarize(Total_Count = sum(COUNT_)) %>%
+  group_by(REPORT_YEAR) %>%
+  mutate(Proportion = round(Total_Count / sum(Total_Count), 3)) %>%
+  arrange(SEX) %>%
+  group_by(SEX) %>%
+  mutate(Percentage_Change_Total = round((Total_Count - lag(Total_Count)) / lag(Total_Count) * 100, 2))
+
+colnames(proportion_sex_year) <- c("Year", "Sex", "Total", "Proportion",
+                                   "Pct Change Total")
+proportion_sex_year[is.na(proportion_sex_year)] = 0
+kable(proportion_sex_year, row.names=FALSE)
+```
+
+As we breakdown the age groups into finer ranges, @fig-three shows that there are consistently a number of outliers in the adult victim category for each year, suggesting that while most adult incidents fall within a consistent range, certain periods saw spikes in crime involving adults, possibly due to heightened vulnerability during specific events. This illustrates the needs for stricter regulations on public events. 
+
+Moreover, a slight upward trend in the number of youth and adult victims is observed after 2020, which is likely connected to broader societal impacts, such as increased stress and economic instability following the COVID-19 pandemic. This shift may indicate rising safety concerns faced by the younger populations over time, and calls for a more robust satefy awareness education strategy.
+
+```{r}
+#| label: fig-three
+#| fig-cap: Victim count distribution by age cohort
+#| echo: false
+#| message: false
+#| warning: false
+
+# Visualization 3: side-by-side boxplot for victims by age groups over year (last 4 years)
+vis3 <- ggplot(data %>% filter(REPORT_YEAR >= 2020), 
+               aes(x = AGE_GROUP, y = COUNT_, color = AGE_GROUP)) +
+  geom_boxplot() +
+  labs(title = "Victim Count Distribution by Age Cohort", 
+       x = "Age Group", y = "Victim Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),
+        legend.position = "none") +
+  facet_grid(~ REPORT_YEAR)
+vis3
+```
 
 \newpage
 
