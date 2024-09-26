@@ -43,15 +43,15 @@ All data analysis and visualization in this paper were performed using the R pro
 
 The dataset consists of 1244 records from 2014 to 2023, with each column representing critical information as follows:
 
-- `REPORT_YEAR`: The year in which the crime was reported.
-- `CATEGORY`: The general classification of the crime, such as "Crimes Against the Person."
-- `SUBTYPE`: A more detailed breakdown of the crime, including types like "Assault" or "Robbery."
-- `SEX`: Gender of the victim, represented as Male (M), Female (F), or Unknown (U).
-- `AGE_GROUP`: The age range of the victim, including "Child", "Adult", "Youth", and "Unknown."
-- `AGE_COHORT`: Specific age groupings (e.g., 25 to 34) for more detailed demographic analysis.
-- `COUNT_`: The number of occurrences for each record.
+-   `REPORT_YEAR`: The year in which the crime was reported.
+-   `CATEGORY`: The general classification of the crime, such as "Crimes Against the Person."
+-   `SUBTYPE`: A more detailed breakdown of the crime, including types like "Assault" or "Robbery."
+-   `SEX`: Gender of the victim, represented as Male (M), Female (F), or Unknown (U).
+-   `AGE_GROUP`: The age range of the victim, including "Child", "Adult", "Youth", and "Unknown."
+-   `AGE_COHORT`: Specific age groupings (e.g., 25 to 34) for more detailed demographic analysis.
+-   `COUNT_`: The number of occurrences for each record.
 
-Each entry in the dataset represents a summary of crime victims by various demographic and crime categories as reported by the Toronto police department. The data originates from actual incidents and victim reports, which are then translated into structured records that quantify crime events over time. In similar studies, other datasets like overall crime reports which usually focus more on offenders could have been used. However, these datasets were not appropriate for our study because this dataset uniquely focuses on victims, providing insights specific to victim demographics and experiences that are important for understanding crime impacts within Toronto local communities. 
+Each entry in the dataset represents a summary of crime victims by various demographic and crime categories as reported by the Toronto police department. The data originates from actual incidents and victim reports, which are then translated into structured records that quantify crime events over time. In similar studies, other datasets like overall crime reports which usually focus more on offenders could have been used. However, these datasets were not appropriate for our study because this dataset uniquely focuses on victims, providing insights specific to victim demographics and experiences that are important for understanding crime impacts within Toronto local communities.
 
 ```{r}
 #| echo: false
@@ -76,7 +76,7 @@ summary_df[is.na(summary_df)] <- ""
 kable(summary_df, row.names = FALSE)
 ```
 
-Table 1 above gives an overview of the distribution of key variables, showing that all crimes recorded in the dataset fall under the "Crimes Against the Person" categories. "Assault" is the most common subtype (617), with a fairly even gender distribution (518 females, 570 males). Age cohorts show a diverse range, with "Unknown" being frequent, and many victims in the 25 to 34 age range (165). This dataset can now facilitate focused analysis on victim profiles and crime trends, making it valuable for understanding community safety. 
+Table 1 above gives an overview of the distribution of key variables, showing that all crimes recorded in the dataset fall under the "Crimes Against the Person" categories. "Assault" is the most common subtype (617), with a fairly even gender distribution (518 females, 570 males). Age cohorts show a diverse range, with "Unknown" being frequent, and many victims in the 25 to 34 age range (165). This dataset can now facilitate focused analysis on victim profiles and crime trends, making it valuable for understanding community safety.
 
 # Results {#sec-results}
 
